@@ -11,20 +11,21 @@ By changing modes you can change:
 * The tools available to the LLM
 * The content and appearance of the UI
 
-Modes allow the LLM to focus on a specific task or outcome, and dynamically change focus to different tasks as appropriate. 
-By encapsulating the LLM's behaviors, your applications will be easier to write, easier to test, and easier to re-use.
+Modes allow the LLM to focus on a specific task or outcome, and dynamically change focus to different tasks as appropriate.
+Modallama enables rich application experiences powered by LLMs.
+Encapsulating the LLM's behaviors, makes these rich applications easier to write, test and re-use.
 
 ## Design principles
+
+* Do one thing well: modal conversations with an LLM
+	* Creating a mode creates a new AI state.
+	* Each mode builds its own state and tools.
+	* Modes may be actived by application code (with `setMode`) or the LLM (with tools).
 
 * Play nicely with existing tools
 	* Vercel's [`ai/rsc`](https://sdk.vercel.ai/docs/concepts/ai-rsc) library
 	* NextJS / React routers
 	* State management like Zustand, Redux, etc
-
-* Do one thing well: modal conversations with an LLM
-	* Creating a mode creates a new AI state.
-	* Each mode builds its own state and tools.
-	* Modes may be actived by users (with `setMode`) or the LLM (with tools).
 
 * Minimal differences from the `ai/rsc` interface
 	* Initial state created on mode entry rather than on `createAI`, since each mode has its own state.
@@ -41,8 +42,10 @@ Each tool determines how to render the UI when it's used.
 ```typescript
 const bookFlight = mode({
 	// Configure the model used for this mode - different modes may use different models as appropriate
-	model: 'gpt-4-turbo',
-	provider: openai,
+	model: {
+		provider: openai,
+		name: 'gpt-4-turbo'
+        },
 
 	// This string describes the mode's purpose and behavior to the LLM, 
 	// and is used by the LLM to decide if/when to enter this mode
@@ -93,8 +96,10 @@ Notice that we've changed the system prompt, constructed a new AI state, and pro
 ```typescript
 const policyQA = mode({
 	// Configure the model used for this mode - different modes may use different models as appropriate
-	model: 'gpt-4-turbo',
-	provider: openai,
+	model: {
+		provider: openai,
+		name: 'gpt-4-turbo'
+	},
 
 	// This string describes the mode's purpose and behavior to the LLM, 
 	// and is used by the LLM to decide if/when to enter this mode
@@ -116,7 +121,7 @@ const policyQA = mode({
 			You are a helpful airline policy assistant.
 
 			Your goal is to answer any questions the user asks based on information 
-			in the company knowledge base..
+			in the company knowledge base.
 			
 			ONLY answer questions based on information in the knowledge base.
 			If you can't answer based on information in the knowledge base tell the 
@@ -141,8 +146,10 @@ The LLM may choose to enter another mode based on the user input, for example, i
 ```typescript
 const orientation = mode({
 	// Configure the model used for this mode - different modes may use different models as appropriate
-	model: 'gpt-4-turbo',
-	provider: openai,
+	model: {
+		provider: openai,
+		name: 'gpt-4-turbo'
+	},
 
 	// This string describes the mode's purpose and behavior to the LLM, 
 	// and is used by the LLM to decide if/when to enter this mode
